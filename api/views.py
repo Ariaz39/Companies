@@ -84,18 +84,25 @@ class CompanyView(View):
         # print(request.body)
         jd = json.loads(request.body)
         # print(jd)
-        Company.objects.create(name=jd['name'], website=jd['website'], foundation=jd['foundation'])
+        Company.objects.create(
+            name=jd['name'],
+            website=jd['website'],
+            foundation=jd['foundation'],
+            office_id = jd['office_id']
+        )
         datos = {'message': 'Compania agregada correctamente'}
         return JsonResponse(datos)
 
     def put(self, request, id):
         jd = json.loads(request.body)
+        print(jd)
         companies = list(Company.objects.filter(id=id).values())
         if len(companies) > 0:
             company = Company.objects.get(id=id)
             company.name = jd['name']
             company.website = jd['website']
             company.foundation = jd['foundation']
+            company.office_id = jd['office_id']
             company.save()
 
             datos = {'message': 'Company actualizada con exito'}
