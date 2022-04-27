@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from api.models import Company
+from api.models import Company, Offices
 
 admin.site.register(Company)
+admin.site.register(Offices)
