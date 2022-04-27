@@ -5,10 +5,58 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Company
+from .models import Company, Offices
 
 
 # Create your views here.
+class OfficesView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, id=0):
+        if id > 0:
+            offices = list(Offices.objects.filter(id=id).values())
+            if len(offices) > 0:
+                office = offices[0]
+                data = {'message': 'Oficina detallada correctamente'}
+            else:
+                data = {'message': 'No existe la oficina indicada'}
+            return JsonResponse(data)
+        else:
+            offices = list(Offices.objects.values())
+            if len(offices) > 0:
+                data = {'message': 'Oficinas listadas con exito', 'Oficinas': offices}
+            else:
+                data = {'message': 'No existen oficinas.'}
+            return JsonResponse(data)
+
+    def post(self, request):
+        jd = json.loads(request.body)
+        Offices.objects.create(name=jd['name'], city=jd['city'])
+
+        data = {'message': 'Oficina creada con exito'}
+        return JsonResponse(data)
+
+    def put(self, request, id=id):
+        jd = json.loads(request.body)
+        office = Offices.objects.get(id=id)
+        office.name = jd['name']
+        office.city = jd['city']
+        office.save()
+        data = {'message': 'Oficina actualizada con exito'}
+        return JsonResponse(data)
+
+    def delete(self, request, id=id):
+        offices = Offices.objects.filter(id=id).values()
+        if len(offices) > 0:
+            office = Offices.objects.get(id=id)
+            office.delete()
+            data = {'message': 'Oficina eliminada con exito'}
+        else:
+            data = {'message': 'No existe la oficina indicada'}
+        return JsonResponse(data)
+
 
 class CompanyView(View):
     @method_decorator(csrf_exempt)
